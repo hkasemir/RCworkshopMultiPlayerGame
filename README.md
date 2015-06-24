@@ -34,11 +34,24 @@ with this code, you should be able to go to your terminal and
 $ node index.js
 ```
 
-navigate to localhost:3000 in your web browser and see the start of your game!
+navigate to localhost:3000 in your web browser and see the single-player version of your game!
+
+3: To make this a multiplayer game, we have to create a 'game room' with an id that you can pass to your opponent so they can join you online to play.
+
+This means we should modify the tictactoe.html file so that we have a 'create/join game' screen to either create or join a new game.
+
+Open up tictactoe.html, you should see this:
+
+
+
 
 Resources we used for this project are:
-This tutorial by Eric Terpstra
+This tutorial by Eric Terpstra:
+
 http://modernweb.com/2013/09/30/building-multiplayer-games-with-node-js-and-socket-io/
-And the wonderful stack overflow answer by learnRPG
+
+
+And the wonderful stack overflow answer by learnRPG:
+
 http://stackoverflow.com/questions/10058226/send-response-to-all-clients-except-sender-socket-io
 
