@@ -6,11 +6,13 @@ We'll be using a simple tic tac toe game as an example. The basic javascript fil
 
 In order to follow this tutorial, you'll have to have node installed.
 
-## 1: Fork this repo!
+## 1: Fork this Repo!
 
 then type ```npm install``` in your terminal. This installs the dependencies in the ```package.json``` file.
 
-## 2: create an ```index.js``` file with the following:
+## 2: Make a Node Server
+
+create an ```index.js``` file with the following:
 ```javascript
 var express = require("express");
 var app = express();
@@ -37,7 +39,9 @@ $ node index.js
 
 navigate to localhost:3000 in your web browser and see the single-player version of your game!
 
-## 3: To make this a multiplayer game, we have to create a 'game room' with an id that you can pass to your opponent so they can join you online to play.
+## 3: Get a Room
+
+To make this a multiplayer game, we have to create a 'game room' with an id that you can pass to your opponent so they can join you online to play.
 
 This means we should modify the ```tictactoe.html``` file so that we have a 'create/join game' screen to either create or join a new game.
 
@@ -107,7 +111,9 @@ replace everything in the ```<body>``` tags of your original ```tictactoe.html``
 
 
 
-## 4: Now let's create an ```app.js``` file in the public/js directory, and add it to your ```tictactoe.html``` file right below the ```tictactoe.js``` file. While you're at it, we should also add the script for socket.io, like so:
+## 4: Create your Client
+
+Now let's create an ```app.js``` file in the public/js directory, and add it to your ```tictactoe.html``` file right below the ```tictactoe.js``` file. While you're at it, we should also add the script for socket.io, like so:
 ```html
 ...
   <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
@@ -144,7 +150,9 @@ Finally, outside the ```init()``` function, we add an event listener to the wind
 // window.addEventListener('load', createGame);
 ```
 
-## 5: Now that the client is sending something to the server, we need to make sure the server knows how to read it.
+## 5: Client-Server Communication
+
+Now that the client is sending something to the server, we need to make sure the server knows how to read it.
 
 Go to ```'index.js'```
 
@@ -178,7 +186,9 @@ This updates the game area div with the ```'game_screen'``` template, and displa
 
 Now restart the node server (In your terminal, Ctrl+C, then ```node index.js``` again). Refresh your browser, and try it out!
 
-## 6: Now we need to allow the opponent to join the game.
+## 6: Bring in the Opponent
+
+Now we need to allow the opponent to join the game.
 
 In ```app.js``` we add an event listener on the 'Join Game' button:
 
@@ -209,7 +219,7 @@ socket.on('join room', function(joinGameId){
 
 The server checks if a 'game room' with the given id exists, and if so, it adds the opponent to the 'game room'. Then, the ```io.sockets.in().emit()``` sends a 'message' event to all the clients in the game room, notifying them that the game has begun.
 
-## 7: Now we need to get this game started.
+## 7: Let's Get this Game Started.
 
 Update your ```app.js``` file with the following:
 
@@ -246,7 +256,7 @@ Now we've also taken the 'New Game' button (with the id="refresh") and added an 
 
 To see the changes here on your browser, you'll have to restart the server again. This has to happen any time we edit the ```index.js``` file.
 
-## 8: Make a move.
+## 8: Make a Move.
 
 The client is sending either a 'move' or 'new game' event to the server, so again, we have to handle it. Go to ```index.js``` and insert the following inside the ```io.on('connection', function(socket){ ... })``` block:
 
@@ -301,6 +311,7 @@ This also means we need to remove the calls to adding and removing the box event
 On top of that, since we are handling the 'New Game' button, we can remove the event listener on the ```refreshButton``` in ```tictactoe.js```.
 
 ~~var refreshButton = document.getElementById('refresh');~~
+
 ~~refreshButton.addEventListener('click', refreshBoard);~~
 
 
