@@ -2,7 +2,8 @@
 
 Learn to make a multiplayer game with Node, Express.js and socket.io!
 
-We'll be using a simple tic tac toe game as an example:
+We'll be using a simple tic tac toe game as an example. The basic javascript file for the game logic, html, and css for styling are included in this repository. In fact, that's all that you'll be getting when you fork it, so if you feel like using your own game, feel free to modify the below tutorial to fit your needs!
+
 In order to follow this tutorial, you'll have to have node installed.
 
 1: fork this repo!
@@ -64,7 +65,7 @@ Open up ```tictactoe.html```, you should see this:
 
 To make the different game screens, we can use html templates. These allow us to switch between multiple screens without having to write multiple html files. This will get called by your app later on.
 
-Put this at the bottom of your ```tictactoe.html```:
+Put this at the bottom of your ```tictactoe.html```, before the closing ```</body>``` tag:
 
 ```html
 <div id="game_area"></div>
@@ -105,7 +106,13 @@ Put this at the bottom of your ```tictactoe.html```:
 
 
 
-4: Now let's create an ```app.js``` file in the public/js directory.
+4: Now let's create an ```app.js``` file in the public/js directory, and add it to your ```tictactoe.html``` file right below the ```tictactoe.js``` file, like so:
+```html
+...
+  <script src="./js/tictactoe.js"></script>
+  <script src="./js/app.js" type="text/javascript"></script>
+...
+```
 
 ```javascript
 
@@ -120,13 +127,19 @@ function init(){
     socket.emit('create room');
   })
 }
+
+window.addEventListener('load', init);
 ```
+
+
 
 Creating the variable ```socket = io()``` initializes the socket on the client side. Recall how ```index.js``` initialized the server, it's helpful to remember which is the client (what you see in your browser) and which is the server (what helps your browser communicate with your opponent's browser).
 
 Then we grab the ```'game_area'``` element in ```tictactoe.html``` so we can write the template for the ```'initial_screen'``` inside of it.
 
 After that we add an event listener to the ```'start_button'``` element so that when we click on it we (the client) send a ```'create room'``` event to the server.
+
+Finally, outside the ```init()``` function, we add an event listener to the window so that when the page loads, we call it.
 
 5: Now that the client is sending something to the server, we need to make sure the server knows how to read it.
 
@@ -147,7 +160,7 @@ With this code, the server generates a random number with up to 7 digits to act 
 
 Now the client has received a ```'gameId'``` event, we have to handle it.
 
-In ```app.js``` we add:
+In ```app.js``` we add the following code inside the ```init()``` function:
 
 ```javascript
 socket.on('gameId', function(data){
@@ -222,7 +235,7 @@ Update your ```app.js``` file with the following:
   }
   ```
   
-  This updates the game area for every client in the 'game room' with a gameboard and the message to begin the game. 
+  This updates the game area for every client in the 'game room' with a fresh gameboard and the message to begin the game. The ```startNewGame()``` function calls ```createGame()``` in ```tictactoe.js``` (which it h
   
 
 
