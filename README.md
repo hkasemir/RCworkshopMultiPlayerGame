@@ -7,9 +7,9 @@ In order to follow this tutorial, you'll have to have node installed.
 
 1: fork this repo!
 
-then npm install (this installs the dependencies in the package.json file)
+then type ```npm install``` in your terminal. This installs the dependencies in the ```package.json``` file.
 
-2: create an index.js file with the following:
+2: create an ```index.js``` file with the following:
 ```
 var express = require("express");
 var app = express();
@@ -27,7 +27,7 @@ http.listen(port, function(){
   console.log('listening on :3000');
 });
 ```
-
+This code initializes the socket on the server side.
 with this code, you should be able to go to your terminal and 
 
 ```
@@ -38,10 +38,107 @@ navigate to localhost:3000 in your web browser and see the single-player version
 
 3: To make this a multiplayer game, we have to create a 'game room' with an id that you can pass to your opponent so they can join you online to play.
 
-This means we should modify the tictactoe.html file so that we have a 'create/join game' screen to either create or join a new game.
+This means we should modify the ```tictactoe.html``` file so that we have a 'create/join game' screen to either create or join a new game.
 
-Open up tictactoe.html, you should see this:
+Open up ```tictactoe.html```, you should see this:
 
+```
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Tic Tac Toe</title>
+  <link rel="stylesheet" href="./styles/tttstyle.css"></link>
+  <script src="./js/tictactoe.js"></script>
+</head>
+
+<body>
+ <div id='gamecontrols'>
+  <button id="refresh">New Game</button>
+ </div>
+ <div>
+   <h2 id='gamestatus'>WINNER!</h2>
+ </div>
+  <div id="gameboard">
+  </div>
+</body>
+```
+
+To make the first screen, we create an html template. We use these to switch between multiple screens without having to write multiple html files. This will get called by your app later on.
+
+Put this at the bottom of your ```tictactoe.html```:
+
+```
+<div id="game_area"></div>
+
+
+<script id="initial_screen" type="text/template">
+
+<div>
+    <h1>Create a new Tic Tac Toe Game</h1>
+    <button id="start_button">Start Game</button>
+    <br />
+    <button id="join_game_button">Join Game</button>
+    <input id="join_game_in" type="text"/>
+</div>
+
+</script>
+```
+
+4: Now let's create an ```app.js``` file in the public/js directory.
+
+```
+
+function init(){
+  var socket = io();
+  var gameArea = document.getElementById('game_area');
+  var initialScreen = document.getElementById('initial_screen').innerHTML;
+  gameArea.innerHTML = initialScreen;
+
+  var startButton = document.getElementById('start_button');
+  startButton.addEventListener('click', function(){
+    socket.emit('create room');
+  })
+}
+```
+
+Creating the variable ```socket = io()``` initializes the socket on the client side. Recall how ```index.js``` initialized the server, it's helpful to remember which is the client (what you see in your browser) and which is the server (what helps your browser communicate with your opponent's browser).
+
+Then we grab the ```'game_area'``` element in ```tictactoe.html``` so we can write the template for the ```'initial_screen'``` inside of it.
+
+After that we add an event listener to the ```'start_button'``` element so that when we click on it we (the client) send a ```'create room'``` message to the server.
+
+5: Now that the client is sending something to the server, we need to make sure the server knows how to read it.
+
+Go to ```'index.js'```
+
+```
+io.on('connection', function(socket){
+  var gameId = null;
+  socket.on('create room', function(){
+    gameId = Math.random() * 1000000 | 0;
+    socket.join(gameId);
+    socket.emit('gameId', gameId);
+  })
+}
+```
+
+With this code, the server generates a random number with up to 7 digits to act as a game room id, it then creates a new game room and adds the first client to it. With it's own ```socket.emit()``` it sends the id number back to the client so she can share it with her opponent, who will join her later.
+
+Now the client has received a ```'gameId'``` message, we have to handle it.
+
+In ```app.js``` we add:
+
+```
+socket.on('gameId', function(data){
+    var gameScreen = document.getElementById('game_screen').innerHTML;
+    gameArea.innerHTML = gameScreen;
+    var gameIdHeader = document.getElementById('game_id');
+    gameIdHeader.textContent = data;
+  });
+```
+
+This updates the game area with the game screen, and displays the game id.
+
+6:
 
 
 
