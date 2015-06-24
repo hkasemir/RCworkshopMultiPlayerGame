@@ -6,11 +6,11 @@ We'll be using a simple tic tac toe game as an example. The basic javascript fil
 
 In order to follow this tutorial, you'll have to have node installed.
 
-1: fork this repo!
+## 1: Fork this repo!
 
 then type ```npm install``` in your terminal. This installs the dependencies in the ```package.json``` file.
 
-2: create an ```index.js``` file with the following:
+## 2: create an ```index.js``` file with the following:
 ```javascript
 var express = require("express");
 var app = express();
@@ -37,7 +37,7 @@ $ node index.js
 
 navigate to localhost:3000 in your web browser and see the single-player version of your game!
 
-3: To make this a multiplayer game, we have to create a 'game room' with an id that you can pass to your opponent so they can join you online to play.
+## 3: To make this a multiplayer game, we have to create a 'game room' with an id that you can pass to your opponent so they can join you online to play.
 
 This means we should modify the ```tictactoe.html``` file so that we have a 'create/join game' screen to either create or join a new game.
 
@@ -107,7 +107,7 @@ replace everything in the ```<body>``` tags of your original ```tictactoe.html``
 
 
 
-4: Now let's create an ```app.js``` file in the public/js directory, and add it to your ```tictactoe.html``` file right below the ```tictactoe.js``` file. While you're at it, we should also add the script for socket.io, like so:
+## 4: Now let's create an ```app.js``` file in the public/js directory, and add it to your ```tictactoe.html``` file right below the ```tictactoe.js``` file. While you're at it, we should also add the script for socket.io, like so:
 ```html
 ...
   <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
@@ -144,7 +144,7 @@ Finally, outside the ```init()``` function, we add an event listener to the wind
 // window.addEventListener('load', createGame);
 ```
 
-5: Now that the client is sending something to the server, we need to make sure the server knows how to read it.
+## 5: Now that the client is sending something to the server, we need to make sure the server knows how to read it.
 
 Go to ```'index.js'```
 
@@ -156,10 +156,10 @@ io.on('connection', function(socket){
     socket.join(gameId);
     socket.emit('gameId', gameId);
   })
-}
+});
 ```
 
-With this code, the server generates a random number with up to 7 digits to act as a game room id, it then creates a new game room and adds the first client to it. With it's own ```socket.emit()``` it sends the id number back to the client so she can share it with her opponent, who will join her later.
+With this code, the server generates a random number with up to 7 digits to act as a game room id, it then creates a new game room and adds the first client to it. With it's own ```socket.emit()``` it sends the id number back to the client so the player can share it with their opponent, who will join later.
 
 Now the client has received a ```'gameId'``` event, we have to handle it.
 
@@ -176,7 +176,9 @@ socket.on('gameId', function(data){
 
 This updates the game area div with the ```'game_screen'``` template, and displays the game id.
 
-6: Now we need to allow the opponent to join the game.
+Now restart the node server (In your terminal, Ctrl+C, then ```node index.js``` again). Refresh your browser, and try it out!
+
+## 6: Now we need to allow the opponent to join the game.
 
 In ```app.js``` we add an event listener on the 'Join Game' button:
 
@@ -207,7 +209,7 @@ socket.on('join room', function(joinGameId){
 
 The server checks if a 'game room' with the given id exists, and if so, it adds the opponent to the 'game room'. Then, the ```io.sockets.in().emit()``` sends a 'message' event to all the clients in the game room, notifying them that the game has begun.
 
-7: Now we need to get this game started.
+## 7: Now we need to get this game started.
 
 Update your ```app.js``` file with the following:
 
@@ -238,7 +240,66 @@ Update your ```app.js``` file with the following:
   }
   ```
   
-  This updates the game area for every client in the 'game room' with a fresh gameboard and the message to begin the game. The ```startNewGame()``` function calls ```createGame()``` in ```tictactoe.js``` (which it h
+  This updates the game area for every client in the 'game room' with a fresh gameboard and the message to begin the game. The ```startNewGame()``` function calls ```createGame()``` in ```tictactoe.js``` (which it has access to because we put it above ```app.js``` in the ```tictactoe.html``` file. Gotta love that!). It then adds event listeners to all the boxes in the tictactoe game board, so when we click on them, we can extract info about which box we clicked, and emit a 'move' event to the server.
+  
+Now we've also taken the 'New Game' button (with the id="refresh") and added an event listener to start a new game by telling the server that the button was clicked.
+
+To see the changes here on your browser, you'll have to restart the server again. This has to happen any time we edit the ```index.js``` file.
+
+## 8: Make a move.
+
+The client is sending either a 'move' or 'new game' event to the server, so again, we have to handle it. Go to ```index.js``` and insert the following inside the ```io.on('connection', function(socket){ ... })``` block:
+
+```javascript
+  socket.on('new game', function(){
+    io.sockets.in(gameId).emit('start new game');
+  });
+  
+  socket.on('move', function(id){
+    io.sockets.in(gameId).emit('update board', id)
+  });
+```
+
+Getting the hang of it yet?
+
+This sends all the clients in the 'game room' ```'update board'```  or '''`start new game'``` events.
+
+Now in ```app.js``` we handle this:
+
+```javascript
+  socket.on('start new game', startNewGame);
+  
+  socket.on('update board', function(id){
+    makeMove(id)
+  });
+```
+
+but this requires a little bit of tweaking in the ```tictactoe.js``` file. We have to change the ```makeMove()``` function to accept the ```id``` of the box as an argument, rather than the original event object.
+
+So it changes from:
+
+```javascript
+function makeMove(event){
+  clickToBoard(event.target.id);
+  checkWin(tttBoard);
+}
+```
+to:
+```javascript
+
+function makeMove(id){
+  clickToBoard(id);
+  checkWin(tttBoard);
+}
+```
+This also means we need to remove the calls to adding and removing the box event listeners, which are assigned in the ```drawBoard``` and ```clickToBoard```
+
+~~box.addEventListener("click", makeMove)~~
+~~box.removeEventListener("click", makeMove)~~
+
+
+
+
   
 
 
