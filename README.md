@@ -65,11 +65,12 @@ Open up ```tictactoe.html```, you should see this:
 
 To make the different game screens, we can use html templates. These allow us to switch between multiple screens without having to write multiple html files. This will get called by your app later on.
 
-Put this at the bottom of your ```tictactoe.html```, before the closing ```</body>``` tag:
+replace everything in the ```<body>``` tags of your original ```tictactoe.html```, with the following:
 
 ```html
-<div id="game_area"></div>
-
+<body>
+  <div id="game_area"></div>
+</body>
 
 <script id="initial_screen" type="text/template">
 
@@ -106,14 +107,15 @@ Put this at the bottom of your ```tictactoe.html```, before the closing ```</bod
 
 
 
-4: Now let's create an ```app.js``` file in the public/js directory, and add it to your ```tictactoe.html``` file right below the ```tictactoe.js``` file, like so:
+4: Now let's create an ```app.js``` file in the public/js directory, and add it to your ```tictactoe.html``` file right below the ```tictactoe.js``` file. While you're at it, we should also add the script for socket.io, like so:
 ```html
 ...
+  <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
   <script src="./js/tictactoe.js"></script>
   <script src="./js/app.js" type="text/javascript"></script>
 ...
 ```
-
+and then in ```app.js```:
 ```javascript
 
 function init(){
@@ -131,15 +133,16 @@ function init(){
 window.addEventListener('load', init);
 ```
 
-
-
 Creating the variable ```socket = io()``` initializes the socket on the client side. Recall how ```index.js``` initialized the server, it's helpful to remember which is the client (what you see in your browser) and which is the server (what helps your browser communicate with your opponent's browser).
 
 Then we grab the ```'game_area'``` element in ```tictactoe.html``` so we can write the template for the ```'initial_screen'``` inside of it.
 
 After that we add an event listener to the ```'start_button'``` element so that when we click on it we (the client) send a ```'create room'``` event to the server.
 
-Finally, outside the ```init()``` function, we add an event listener to the window so that when the page loads, we call it.
+Finally, outside the ```init()``` function, we add an event listener to the window so that when the page loads, we call it. In the original ```tictactoe.js``` file, we do this same thing, so go to the bottom and comment out this line to remove the redundancy:
+```javascript
+// window.addEventListener('load', createGame);
+```
 
 5: Now that the client is sending something to the server, we need to make sure the server knows how to read it.
 
