@@ -88,8 +88,7 @@ function drawBoard(brd){
       bData.id = "r"+i+"c"+j;
       bData.setAttribute('data-row', i);
       bData.setAttribute('data-col', j);
-//      no longer needed with sockets emit event
-//      bData.addEventListener("click", makeMove);
+     bData.addEventListener("click", makeMove);
       bRow.appendChild(bData);
     }
 	gBoard.appendChild(bRow);
@@ -97,8 +96,8 @@ function drawBoard(brd){
 };
 
 
-function makeMove(id){
-  clickToBoard(id);
+function makeMove(event){
+  clickToBoard(event.target.id);
   checkWin(tttBoard);
 }
 
@@ -131,17 +130,12 @@ function refreshBoard(bSize){
 var createGame = function() {
   var size = 3
   
-//  var refreshButton = document.getElementById('refresh');
-//  refreshButton.addEventListener('click', refreshBoard);
+ var refreshButton = document.getElementById('refresh');
+ refreshButton.addEventListener('click', refreshBoard);
   
-  
-//  not necessary with socket emit event  
-//  boardSizeSelector.addEventListener('change', function(){
-//    size = this.selectedOptions[0].label;
-//    refreshBoard(size);
-//  });
   
   refreshBoard(size);
   
 };
-//window.addEventListener('load', createGame);
+
+window.addEventListener('load', createGame);
