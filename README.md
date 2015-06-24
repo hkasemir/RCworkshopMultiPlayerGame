@@ -3,6 +3,7 @@
 Learn to make a multiplayer game with Node, Express.js and socket.io!
 
 We'll be using a simple tic tac toe game as an example:
+In order to follow this tutorial, you'll have to have node installed.
 
 1: fork this repo!
 
@@ -27,4 +28,17 @@ http.listen(port, function(){
 });
 ```
 
+with this code, you should be able to go to your terminal and 
+
+```
+$ node index.js
+```
+
+navigate to localhost:3000 in your web browser and see the start of your game!
+
+Resources we used for this project are:
+This tutorial by Eric Terpstra
+http://modernweb.com/2013/09/30/building-multiplayer-games-with-node-js-and-socket-io/
+And the wonderful stack overflow answer by learnRPG
+http://stackoverflow.com/questions/10058226/send-response-to-all-clients-except-sender-socket-io
 
