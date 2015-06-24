@@ -295,8 +295,18 @@ function makeMove(id){
 This also means we need to remove the calls to adding and removing the box event listeners, which are assigned in the ```drawBoard``` and ```clickToBoard```
 
 ~~box.addEventListener("click", makeMove)~~
+
 ~~box.removeEventListener("click", makeMove)~~
 
+On top of that, since we are handling the 'New Game' button, we can remove the event listener on the ```refreshButton``` in ```tictactoe.js```.
+
+~~var refreshButton = document.getElementById('refresh');~~
+~~refreshButton.addEventListener('click', refreshBoard);~~
+
+
+Restart the server, refresh your browser, and test it out!
+
+Congratulations, you now have a working multiplayer game (you can add as many people as you like, unfortunately this simple game doesn't have the intelligence to handle that gracefully).
 
 
 
