@@ -307,7 +307,8 @@ Right now when we click on the 'New Game' button, nothing happens - the players 
 In your ```app.js``` file:
 
 ```javascript
-    // This goes inside the socket.on('message' ...) so that once the game begins, it adds the event listener to the 'new game' button.
+    // This goes inside the socket.on('message' ...) so that once the game begins,
+    // it adds the event listener to the 'new game' button.
     var newGame = document.getElementById('refresh');
     newGame.addEventListener('click', function(){
       socket.emit('new game');
